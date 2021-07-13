@@ -191,22 +191,20 @@ namespace GameOfLife
                 if (Console.KeyAvailable == true)
                 {
                     ConsoleKeyInfo ski = Console.ReadKey(true);
-                    if (ski.Key == ConsoleKey.R)
+                    switch (ski.Key)
                     {
-                        field.FillRandom(config.FillPercent);
-                    }
-                    else if (ski.Key == ConsoleKey.X)
-                    {
-                        config.UpdateTime += 100;
-                    }
-                    else if (ski.Key == ConsoleKey.Z)
-                    {
-                        config.UpdateTime -= 100;
-                    }
-
-                    else if (ski.Key == ConsoleKey.C)
-                    {
-                        config.UpdateTime = 17;
+                        case ConsoleKey.R:
+                            field.FillRandom(config.FillPercent);
+                            break;
+                        case ConsoleKey.X:
+                            config.UpdateTime += 100;
+                            break;
+                        case ConsoleKey.Z:
+                            config.UpdateTime -= 100;
+                            break;
+                        case ConsoleKey.C:
+                            config.UpdateTime = 17;
+                            break;
                     }
                 }
 

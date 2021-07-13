@@ -1,11 +1,5 @@
 ﻿using System;
 
-enum Cell
-{
-    ALIVE = '#',
-    DEAD = ' '
-}
-
 
 namespace GameOfLife
 {
@@ -28,7 +22,7 @@ namespace GameOfLife
             }
             if (args.Length >= 2 && int.TryParse(args[1], out _))
             {
-                config.RefreshTime = int.Parse(args[1]);
+                config.UpdateTime = int.Parse(args[1]);
             }
             if (args.Length >= 3 && int.TryParse(args[2], out _))
             {
@@ -41,6 +35,7 @@ namespace GameOfLife
         }
 
     }
+
     public ref struct Config
     {
         public float FillPercent;
@@ -48,7 +43,7 @@ namespace GameOfLife
         public int Height;
         public int Width;
 
-        public int RefreshTime
+        public int UpdateTime
         {
             get
             {
@@ -79,6 +74,14 @@ namespace GameOfLife
             Width = width;
         }
     }
+
+
+    enum Cell
+    {
+        ALIVE = '#',
+        DEAD = ' '
+    }
+
 
     class Field
     {
@@ -153,9 +156,9 @@ namespace GameOfLife
                 }
             }
         }
+
         public static string Frame(byte[,] field)
         {
-
             string frame = string.Empty;
 
             for (int i = 0; i < field.GetLength(0); i++)
@@ -163,7 +166,6 @@ namespace GameOfLife
                 for (int j = 0; j < field.GetLength(1); j++)
                 {
                     frame += field[i, j] == 1 ? ((char)Cell.ALIVE) : ((char)Cell.DEAD);
-
                 }
                 frame += '\n';
             }
@@ -193,24 +195,26 @@ namespace GameOfLife
                     {
                         field.FillRandom(config.FillPercent);
                     }
-                    if (ski.Key == ConsoleKey.X)
+                    else if (ski.Key == ConsoleKey.X)
                     {
-                        config.RefreshTime += 100;
+                        config.UpdateTime += 100;
                     }
-                    if (ski.Key == ConsoleKey.Z)
+                    else if (ski.Key == ConsoleKey.Z)
                     {
-                        config.RefreshTime -= 100;
+                        config.UpdateTime -= 100;
                     }
-                    if (ski.Key == ConsoleKey.C)
+
+                    else if (ski.Key == ConsoleKey.C)
                     {
-                        config.RefreshTime = 17;
+                        config.UpdateTime = 17;
                     }
                 }
 
-                if (config.RefreshTime != 1) System.Threading.Thread.Sleep(config.RefreshTime);
+                if (config.UpdateTime != 1) System.Threading.Thread.Sleep(config.UpdateTime);
                 Console.SetCursorPosition(0, 0);
                 Console.Write(Frame(Field_now));
-                Console.Write($"\nR - refresh, Z - faster, X - slower, C - comfort\nFill: {config.FillPercent}%     \nSleep time:{config.RefreshTime}     \nFramerate: {1.0f / frameTime}     ");
+                Console.Write($"\nR - refresh, Z - faster, X - slower, C - comfort\n" +
+                    $"Fill: {config.FillPercent}%     \nSleep time:{config.UpdateTime}     \nFramerate: {1.0f / frameTime}     ");
                 UpdateField();
             }
         }

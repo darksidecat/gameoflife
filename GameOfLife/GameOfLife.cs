@@ -38,22 +38,44 @@ namespace GameOfLife
 
     public ref struct Config
     {
-        public float FillPercent;
+        private float _fillPercent;
+        private int _height;
+        private int _width;
         private int _updateTime;
-        public int Height;
-        public int Width;
 
-        public int UpdateTime
+
+        public float FillPercent
         {
-            get
-            {
-                return _updateTime;
-            }
+            get => _fillPercent;
             set
             {
-                if (value <= 0)
+                _fillPercent = value;
+            }
+        }
+        public int Height
+        {
+            get => _height;
+            set
+            {
+                _height = value;
+            }
+        }
+        public int Width
+        {
+            get => _width;
+            set
+            {
+                _width = value;
+            }
+        }
+        public int UpdateTime
+        {
+            get => _updateTime;
+            set
+            {
+                if (value < 0)
                 {
-                    _updateTime = 1;
+                    _updateTime = 0;
                 }
                 else
                 {
@@ -62,16 +84,18 @@ namespace GameOfLife
             }
         }
 
-        public Config(float fillPercent) : this(fillPercent, 501, 45, 180)
+        public Config(float fillPercent) : this(fillPercent, 500, 45, 180)
         {
-            FillPercent = fillPercent;
+        }
+        public Config(float fillPercent, int updateTime) : this(fillPercent, updateTime, 45, 180)
+        {
         }
         public Config(float fillPercent, int updateTime, int height = 45, int width = 180)
         {
-            FillPercent = fillPercent;
+            _fillPercent = fillPercent;
             _updateTime = updateTime;
-            Height = height;
-            Width = width;
+            _height = height;
+            _width = width;
         }
     }
 
@@ -85,20 +109,15 @@ namespace GameOfLife
 
     class Field
     {
-        readonly byte Alive = 1;
-        readonly byte Dead = 0;
+        private readonly byte Alive = 1;
+        private readonly byte Dead = 0;
         private readonly int Height;
         private readonly int Width;
         private byte[,] Field_now;
         private byte[,] Field_next;
 
-        public Field()
+        public Field() : this(10, 10)
         {
-            Height = 10;
-            Width = 10;
-            Field_now = new byte[Height, Width];
-            Field_next = new byte[Height, Width];
-
         }
         public Field(int height, int width)
         {

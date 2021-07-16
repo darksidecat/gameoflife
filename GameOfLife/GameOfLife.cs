@@ -110,7 +110,7 @@ namespace GameOfLife
 
         public byte[,] FillRandom(float fillPercent)
         {
-            Random rnd = new Random();
+            Random rnd = new();
 
             for (int i = 0; i < Height; i++)
             {
@@ -172,12 +172,36 @@ namespace GameOfLife
 
             return frame;
         }
+        public static void ReadInput(ref Field field, ref Config config)
+        {
+            if (Console.KeyAvailable)
+            {
+                ConsoleKeyInfo ski = Console.ReadKey(true);
+                switch (ski.Key)
+                {
+                    case ConsoleKey.R:
+                        field.FillRandom(config.FillPercent);
+                        break;
+                    case ConsoleKey.X:
+                        config.UpdateTime += 100;
+                        break;
+                    case ConsoleKey.Z:
+                        config.UpdateTime -= 100;
+                        break;
+                    case ConsoleKey.C:
+                        config.UpdateTime = 17;
+                        break;
+                }
+            }
+        }
 
         public void Render(Field field, Config config)
         {
             float frameTime = 0;
             int frameCounter = 0;
             DateTime old = DateTime.Now;
+
+            
 
             while (true)
             {
@@ -188,25 +212,8 @@ namespace GameOfLife
                     frameTime = (float)now.Subtract(old).TotalSeconds / 10.0f;
                     old = now;
                 }
-                if (Console.KeyAvailable == true)
-                {
-                    ConsoleKeyInfo ski = Console.ReadKey(true);
-                    switch (ski.Key)
-                    {
-                        case ConsoleKey.R:
-                            field.FillRandom(config.FillPercent);
-                            break;
-                        case ConsoleKey.X:
-                            config.UpdateTime += 100;
-                            break;
-                        case ConsoleKey.Z:
-                            config.UpdateTime -= 100;
-                            break;
-                        case ConsoleKey.C:
-                            config.UpdateTime = 17;
-                            break;
-                    }
-                }
+
+                ReadInput(ref field, ref config);
 
                 if (config.UpdateTime != 1) System.Threading.Thread.Sleep(config.UpdateTime);
                 Console.SetCursorPosition(0, 0);

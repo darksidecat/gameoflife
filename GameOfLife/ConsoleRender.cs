@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace GameOfLife
 {
@@ -36,20 +33,20 @@ namespace GameOfLife
                 config.Width = int.Parse(args[3]);
             }
         }
-        public static string Frame(byte[,] field)
+        public static void Frame(byte[,] field)
         {
-            string frame = string.Empty;
+           
 
             for (int i = 0; i < field.GetLength(0); i++)
             {
+                string frame = string.Empty;
                 for (int j = 0; j < field.GetLength(1); j++)
                 {
                     frame += field[i, j] == 1 ? ((char)Cell.ALIVE) : ((char)Cell.DEAD);
                 }
-                frame += '\n';
+                Console.WriteLine(frame);
             }
 
-            return frame;
         }
         public static void ReadInput(ref Field field, ref Config config)
         {
@@ -81,6 +78,7 @@ namespace GameOfLife
             DateTime old = DateTime.Now;
             Console.Title = "GameOfLife";
 
+            // Console.SetCursorPosition(0, 0);
             while (true)
             {
                 Console.CursorVisible = false;
@@ -88,6 +86,7 @@ namespace GameOfLife
                 frameCounter += 1;
                 if (frameCounter % 10 == 0)
                 {
+
                     DateTime now = DateTime.Now;
                     frameTime = (float)now.Subtract(old).TotalSeconds / 10.0f;
                     old = now;
@@ -95,12 +94,14 @@ namespace GameOfLife
 
                 ReadInput(ref field, ref config);
 
+
                 if (config.UpdateTime != 1) System.Threading.Thread.Sleep(config.UpdateTime);
                 Console.SetCursorPosition(0, 0);
-                Console.Write(Frame(field.FieldCurrent));
+                Frame(field.FieldCurrent);
                 Console.Write($"\nR - refresh, Z - faster, X - slower, C - comfort\n" +
                     $"Fill: {config.FillPercent}%     \nSleep time:{config.UpdateTime}     \nFramerate: {1.0f / frameTime}     ");
                 field.UpdateField();
+
             }
         }
 
@@ -108,8 +109,71 @@ namespace GameOfLife
 
     enum Cell
     {
-        ALIVE = '■',
+        ALIVE = '#',
         DEAD = ' '
+    }
+
+    public ref struct Config
+    {
+        private float _fillPercent;
+        private int _height;
+        private int _width;
+        private int _updateTime;
+
+
+        public float FillPercent
+        {
+            get => _fillPercent;
+            set
+            {
+                _fillPercent = value;
+            }
+        }
+        public int Height
+        {
+            get => _height;
+            set
+            {
+                _height = value;
+            }
+        }
+        public int Width
+        {
+            get => _width;
+            set
+            {
+                _width = value;
+            }
+        }
+        public int UpdateTime
+        {
+            get => _updateTime;
+            set
+            {
+                if (value < 0)
+                {
+                    _updateTime = 0;
+                }
+                else
+                {
+                    _updateTime = value;
+                }
+            }
+        }
+
+        public Config(float fillPercent) : this(fillPercent, 500)
+        {
+        }
+        public Config(float fillPercent, int updateTime) : this(fillPercent, updateTime, 50, 200)
+        {
+        }
+        public Config(float fillPercent, int updateTime, int height, int width)
+        {
+            _fillPercent = fillPercent;
+            _updateTime = updateTime;
+            _height = height;
+            _width = width;
+        }
     }
 
 
